@@ -26,7 +26,10 @@ public class SElecaoSupimpa {
 	List<Receita> receitas;
 	
 	public SElecaoSupimpa() {
-		receitas = inicializarReceitas();
+		receitas = carregarReceitas("receitas.bin");
+		if(receitas == null) {
+			receitas = inicializarReceitas();
+		}
 	}
 	
     public List<Receita> encontrarReceitasCompativeis(List<Ingrediente> ingredientesDisponiveis, List<Receita> receitas) {
@@ -85,7 +88,7 @@ public class SElecaoSupimpa {
 			    for (int i = 0; i < listaNomesIngredientes.size(); i++) {
 			        System.out.println((i + 1) + ". " + listaNomesIngredientes.get(i));
 			    }
-			    System.out.print("\nDigite o número correspondente ao ingrediente (ou 'sair' para encerrar): ");
+			    System.out.print("\nDigite o número correspondente ao ingrediente que você tem (ou 'sair' para encerrar): ");
 			    String escolha = scanner.nextLine();
 
 			    if (escolha.equalsIgnoreCase("sair")) {
