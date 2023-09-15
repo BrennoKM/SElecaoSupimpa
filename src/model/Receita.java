@@ -20,22 +20,28 @@ public class Receita implements Serializable{
         this.categorias = categorias;
     }
     
-    public void imprimirReceita() {
-        System.out.println("Nome da Receita: " + nome);
-        System.out.println("Categorias: " + String.join(", ", categorias));
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
         
-        System.out.println("Ingredientes:");
+        sb.append("\nNome da Receita: ").append(nome).append("\n");
+        sb.append("Categorias: ").append(String.join(", ", categorias)).append("\n");
+        
+        sb.append("Ingredientes:\n");
         for (Ingrediente ingrediente : ingredientes) {
             Quantidade quantidade = ingrediente.getQuantidade();
             String unidade = quantidade.getUnidade().getNome();
-            System.out.println("- " + ingrediente.getNome() + ": " + quantidade.getValor() + " " + unidade);
+            sb.append("- ").append(ingrediente.getNome()).append(": ").append(quantidade.getValor()).append(" ").append(unidade).append("\n");
         }
         
-        System.out.println("Instruções:");
+        sb.append("Instruções:\n");
         for (int i = 0; i < instrucoes.size(); i++) {
-            System.out.println((i + 1) + ". " + instrucoes.get(i));
+            sb.append(instrucoes.get(i)).append("\n");
         }
+
+        return sb.toString();
     }
+
 
     public String getNome() {
         return nome;
@@ -52,4 +58,13 @@ public class Receita implements Serializable{
     public List<String> getCategorias() {
         return categorias;
     }
+    
+    public boolean contemIngrediente(Ingrediente ingrediente) {
+	    for (Ingrediente i : getIngredientes()) {
+	        if (i.getNome().equals(ingrediente.getNome())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 }

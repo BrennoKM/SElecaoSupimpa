@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -23,12 +24,39 @@ import unidades.Quilograma;
 public class SElecaoSupimpa {
 
 	List<Receita> receitas;
-
+	List<Receita> receitasCliente;
+	
 	public SElecaoSupimpa() {
 		receitas = carregarReceitas("receitas.bin");
 		if (receitas == null) {
 			receitas = inicializarReceitas();
 		}
+		recarregarReceitasCliente();
+	}
+	
+	public List<Receita> recarregarReceitasCliente(){
+		receitasCliente = receitas;
+		return receitasCliente;
+	}
+	
+	public void removerReceitasIngredienteCliente(Ingrediente ingrediente) {
+	    Iterator<Receita> iterator = receitasCliente.iterator();
+	    while (iterator.hasNext()) {
+	        Receita receita = iterator.next();
+	        if (receita.contemIngrediente(ingrediente)) {
+	            iterator.remove();
+	        }
+	    }
+	}
+	
+	public void filtrarReceitasIngredienteCategoria(String categoria) {
+	    Iterator<Receita> iterator = receitasCliente.iterator();
+	    while (iterator.hasNext()) {
+	        Receita receita = iterator.next();
+	        if (!receita.getCategorias().contains(categoria)) {
+	            iterator.remove();
+	        }
+	    }
 	}
 
 	public List<Receita> encontrarReceitasCompativeis(List<Ingrediente> ingredientesDisponiveis,
@@ -68,13 +96,24 @@ public class SElecaoSupimpa {
 		return receitasCompativeis;
 	}
 
-	public Set<String> getCategorias() {
+	public Set<String> getCategorias(List<Receita> receitas) {
 		Set<String> categorias = new HashSet<>();
 		for (Receita receita : receitas) {
 			categorias.addAll(receita.getCategorias());
 		}
 		return categorias;
 	}
+	
+	public Set<Ingrediente> getIngredientes(List<Receita> receitas) {
+	    Set<Ingrediente> ingredientes = new HashSet<>();
+	    for (Receita receita : receitas) {
+	        for (Ingrediente ingrediente : receita.getIngredientes()) {
+	            ingredientes.add(ingrediente);
+	        }
+	    }
+	    return ingredientes;
+	}
+
 
 	public Map<String, UnidadeMedida> criarMapaIngredientesUnidadeMedida(List<Receita> receitas) {
         Map<String, UnidadeMedida> mapa = new HashMap<>();
@@ -355,4 +394,11 @@ public class SElecaoSupimpa {
 		}
 	}
 
+	public List<Receita> getReceitas() {		
+		return receitas;
+	}
+	
+	public List<Receita> getReceitasCliente() {		
+		return receitasCliente;
+	}
 }
