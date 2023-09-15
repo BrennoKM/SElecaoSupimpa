@@ -33,4 +33,8 @@ public class Quantidade implements Serializable{
             return valorConvertido >= outraQuantidade.valor;
         }
     }
+
+	public Class<? extends UnidadeMedida> getUnidadeMedida() {
+		return unidade.getClass();
+	}
 }

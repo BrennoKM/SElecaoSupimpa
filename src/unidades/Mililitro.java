@@ -10,6 +10,10 @@ public class Mililitro extends UnidadeMedida {
     	super("Mililitro", 1.0);
     }
 
+	public String getNome() {
+        return "Mililitros";
+    }
+	
     public double converterParaBase(double valor) {
         return valor;
     }

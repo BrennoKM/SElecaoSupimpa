@@ -10,6 +10,10 @@ public class Unidade extends UnidadeMedida {
         super("Unidade", 1.0); // Aqui, 1 unidade é equivalente a 1 unidade.
     }
 
+	public String getNome() {
+        return "Unidades";
+    }
+	
     public double converterParaBase(double valor) {
         return valor; // Unidades como "Unidade" não precisam de conversão
     }

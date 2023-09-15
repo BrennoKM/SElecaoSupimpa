@@ -10,6 +10,10 @@ public class Grama extends UnidadeMedida {
     	super("Grama", 1.0);
     }
 
+	public String getNome() {
+        return "Gramas";
+    }
+	
     public double converterParaBase(double valor) {
         return valor;
     }

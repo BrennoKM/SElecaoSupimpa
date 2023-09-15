@@ -10,6 +10,10 @@ public class Litro extends UnidadeMedida {
     	super("Litro", 1000.0);
     }
 
+	public String getNome() {
+        return "Litros";
+    }
+	
     public double converterParaBase(double valor) {
         return valor * fatorConversao;
     }

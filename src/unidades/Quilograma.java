@@ -10,6 +10,10 @@ public class Quilograma extends UnidadeMedida {
     	super("Quilograma", 1000.0);
     }
 
+	public String getNome() {
+        return "Quilogramas";
+    }
+	
     public double converterParaBase(double valor) {
         return valor * fatorConversao;
     }
