@@ -25,17 +25,26 @@ public class SElecaoSupimpa {
 
 	List<Receita> receitas;
 	List<Receita> receitasCliente;
+	Set<Ingrediente> ingredientesCliente;
 	
 	public SElecaoSupimpa() {
 		receitas = carregarReceitas("receitas.bin");
-		if (receitas == null) {
-			receitas = inicializarReceitas();
-		}
+		ingredientesCliente = new HashSet<Ingrediente>();
+		//if (receitas == null) {
+		//	receitas = inicializarReceitas();
+		//}
 		recarregarReceitasCliente();
 	}
 	
+	public void addIngredienteCliente(Ingrediente ingrediente) {
+		ingredientesCliente.add(ingrediente);
+	}
+	
+	public Set<Ingrediente> getIngredientesCliente(){
+		return ingredientesCliente;
+	}
 	public List<Receita> recarregarReceitasCliente(){
-		receitasCliente = receitas;
+		receitasCliente = new ArrayList<>(receitas);
 		return receitasCliente;
 	}
 	
@@ -58,8 +67,12 @@ public class SElecaoSupimpa {
 	        }
 	    }
 	}
+	
+	public List<Receita> encontrarReceitasCompativeis(){
+		return encontrarReceitasCompativeis(getIngredientesCliente(), receitas);
+	}
 
-	public List<Receita> encontrarReceitasCompativeis(List<Ingrediente> ingredientesDisponiveis,
+	private List<Receita> encontrarReceitasCompativeis(Set<Ingrediente> ingredientesDisponiveis,
 			List<Receita> receitas) {
 		List<Receita> receitasCompativeis = new ArrayList<>();
 
@@ -127,8 +140,8 @@ public class SElecaoSupimpa {
         return mapa;
     }
 	
-	public List<Ingrediente> coletarIngredientesDoCliente() {
-	    List<Ingrediente> ingredientesCliente = new ArrayList<>();
+	public Set<Ingrediente> coletarIngredientesDoCliente() {
+	    Set<Ingrediente> ingredientesCliente = new HashSet<>();
 	    Map<String, UnidadeMedida> ingredientesUnidadeMedida = criarMapaIngredientesUnidadeMedida(receitas);
 	    try (Scanner scanner = new Scanner(System.in)) {
 	        while (true) {
@@ -345,7 +358,7 @@ public class SElecaoSupimpa {
 
 	public void recomendarReceitasParaCliente() {
 		// Coleta os ingredientes do cliente
-		List<Ingrediente> ingredientesCliente = coletarIngredientesDoCliente();
+		Set<Ingrediente> ingredientesCliente = coletarIngredientesDoCliente();
 
 		// Encontra receitas compatíveis com os ingredientes do cliente
 		List<Receita> receitasCompativeis = encontrarReceitasCompativeis(ingredientesCliente, receitas);

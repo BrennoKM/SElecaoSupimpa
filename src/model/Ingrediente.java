@@ -2,6 +2,8 @@ package model;
 
 import java.io.Serializable;
 
+import unidades.UnidadeMedida;
+
 public class Ingrediente implements Serializable{
     /**
 	 * 
@@ -21,5 +23,13 @@ public class Ingrediente implements Serializable{
 
     public Quantidade getQuantidade() {
         return quantidade;
+    }
+    
+    public void setQuantidade(Quantidade quantidade) {
+    	this.quantidade = quantidade;
+    }
+    
+    public UnidadeMedida getUnidade() {
+    	return quantidade.getUnidade();
     }
 }
