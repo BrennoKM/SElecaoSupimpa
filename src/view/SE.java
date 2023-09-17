@@ -157,8 +157,8 @@ public class SE {
 		                break; // Saia do loop e comece novamente após a modificação
 		            } else {
 		                Quantidade quantidade = obterQuantidade(ingrediente);
-		                ingrediente.setQuantidade(quantidade);
-		                se.addIngredienteCliente(ingrediente);
+		                Ingrediente i = new Ingrediente(ingrediente.getNome(), quantidade);
+		                se.addIngredienteCliente(i);
 		            }
 		        }
 		    } while (ingredientesModificados);
