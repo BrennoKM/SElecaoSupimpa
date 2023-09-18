@@ -25,7 +25,9 @@ public class SE {
 
 	public static final int ADMINISTRADOR = 0;
 	public static final int USUARIO_COMUM = 1;
-
+	static List<Receita> receitasCompativeis;
+	
+	
 	public static void main(String[] args) {
 		SElecaoSupimpa se = new SElecaoSupimpa();
 		boolean continuar = true;
@@ -95,18 +97,21 @@ public class SE {
 				iniciarSistemaEspecialista(se);
 				break;
 			case 1:
-				visualizarIngredientes(se);
+				visualizarReceitas();
 				break;
 			case 2:
-				adicionarIngrediente(se);
+				visualizarIngredientes(se);
 				break;
 			case 3:
-				removerIngrediente(se);
+				adicionarIngrediente(se);
 				break;
 			case 4:
-				editarIngrediente(se);
+				removerIngrediente(se);
 				break;
 			case 5:
+				editarIngrediente(se);
+				break;
+			case 6:
 				continuar = false; // Para sair do loop
 				break;
 			default:
@@ -123,7 +128,7 @@ public class SE {
 	}
 
 	public static int exibirMenuComum() {
-		String[] opcoesComum = { "Iniciar Sistema Especialista", "Visualizar Ingredientes", "Adicionar Ingrediente",
+		String[] opcoesComum = { "Iniciar Sistema Especialista", "Visualizar Receitas Compativeis","Visualizar Ingredientes", "Adicionar Ingrediente",
 				"Remover Ingrediente", "Editar Ingrediente", "Voltar" };
 		return exibirMenu(opcoesComum, "Menu do Usuário Comum:");
 	}
@@ -183,6 +188,42 @@ public class SE {
 		JOptionPane.showMessageDialog(null, "Nova receita adicionada com sucesso!");
 	}
 
+	private static void visualizarReceitas() {
+		if(receitasCompativeis == null) {
+			JOptionPane.showMessageDialog(null, "Não há receitas disponíveis para visualização.");
+			return;
+		}
+		
+	    List<Receita> receitas = new ArrayList<>(receitasCompativeis); // Obtenha a lista de receitas do sistema
+
+	    if (receitas.isEmpty()) {
+	        JOptionPane.showMessageDialog(null, "Não há receitas disponíveis para visualização.");
+	    } else {
+	        String[] nomesReceitas = new String[receitas.size()];
+	        for (int i = 0; i < receitas.size(); i++) {
+	            nomesReceitas[i] = receitas.get(i).getNome();
+	        }
+
+	        String escolha = (String) JOptionPane.showInputDialog(
+	                null,
+	                "Selecione uma receita para visualizar:",
+	                "Visualizar Receitas",
+	                JOptionPane.PLAIN_MESSAGE,
+	                null,
+	                nomesReceitas,
+	                nomesReceitas[0]);
+
+	        if (escolha != null) {
+	            for (Receita receita : receitas) {
+	                if (receita.getNome().equals(escolha)) {
+	                    JOptionPane.showMessageDialog(null, receita, "Receita: " + receita.getNome(), JOptionPane.PLAIN_MESSAGE);
+	                    return;
+	                }
+	            }
+	        }
+	    }
+	}
+	
 	private static void visualizarReceitas(SElecaoSupimpa se) {
 	    List<Receita> receitas = se.getReceitas(); // Obtenha a lista de receitas do sistema
 
@@ -448,7 +489,7 @@ public class SE {
 			}
 		} while (ingredientesModificados);
 
-		List<Receita> receitasCompativeis = se.encontrarReceitasCompativeis();
+		receitasCompativeis = se.encontrarReceitasCompativeis();
 
 		// Exibe as receitas filtradas para o usuário
 		if (!receitasCompativeis.isEmpty()) {
