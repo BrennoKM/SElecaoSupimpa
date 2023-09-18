@@ -32,4 +32,9 @@ public class Ingrediente implements Serializable{
     public UnidadeMedida getUnidade() {
     	return quantidade.getUnidade();
     }
+
+	public void setNome(String novoNomeIngrediente) {
+		this.nome = novoNomeIngrediente;
+		
+	}
 }

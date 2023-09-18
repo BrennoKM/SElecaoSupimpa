@@ -14,22 +14,17 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import unidades.Grama;
-import unidades.Litro;
-import unidades.Mililitro;
-import unidades.Unidade;
 import unidades.UnidadeMedida;
-import unidades.Quilograma;
 
 public class SElecaoSupimpa {
 
 	List<Receita> receitas;
 	List<Receita> receitasCliente;
-	Set<Ingrediente> ingredientesCliente;
+	Map<String, Ingrediente> ingredientesCliente;
 	
 	public SElecaoSupimpa() {
 		receitas = carregarReceitas("receitas.bin");
-		ingredientesCliente = new HashSet<Ingrediente>();
+		ingredientesCliente = new HashMap<>();
 		//if (receitas == null) {
 		//	receitas = inicializarReceitas();
 		//}
@@ -37,10 +32,10 @@ public class SElecaoSupimpa {
 	}
 	
 	public void addIngredienteCliente(Ingrediente ingrediente) {
-		ingredientesCliente.add(ingrediente);
+		ingredientesCliente.put(ingrediente.getNome(), ingrediente);
 	}
 	
-	public Set<Ingrediente> getIngredientesCliente(){
+	public Map<String, Ingrediente> getIngredientesCliente(){
 		return ingredientesCliente;
 	}
 	public List<Receita> recarregarReceitasCliente(){
@@ -72,43 +67,43 @@ public class SElecaoSupimpa {
 		return encontrarReceitasCompativeis(getIngredientesCliente(), receitas);
 	}
 
-	private List<Receita> encontrarReceitasCompativeis(Set<Ingrediente> ingredientesDisponiveis,
-			List<Receita> receitas) {
-		List<Receita> receitasCompativeis = new ArrayList<>();
+	private List<Receita> encontrarReceitasCompativeis(Map<String, Ingrediente> ingredientesDisponiveis,
+	        List<Receita> receitas) {
+	    List<Receita> receitasCompativeis = new ArrayList<>();
 
-		for (Receita receita : receitas) {
-			List<Ingrediente> ingredientesReceita = receita.getIngredientes();
-			boolean receitaCompativel = true;
+	    for (Receita receita : receitas) {
+	        List<Ingrediente> ingredientesReceita = receita.getIngredientes();
+	        boolean receitaCompativel = true;
 
-			for (Ingrediente ingredienteReceita : ingredientesReceita) {
-				Quantidade quantidadeReceita = ingredienteReceita.getQuantidade();
-				boolean ingredienteEncontrado = false;
+	        for (Ingrediente ingredienteReceita : ingredientesReceita) {
+	            Quantidade quantidadeReceita = ingredienteReceita.getQuantidade();
+	            boolean ingredienteEncontrado = false;
 
-				for (Ingrediente ingredienteDisponivel : ingredientesDisponiveis) {
-					if (ingredienteReceita.getNome().equals(ingredienteDisponivel.getNome())) {
-						Quantidade quantidadeDisponivel = ingredienteDisponivel.getQuantidade();
+	            // Verifica se o ingrediente está disponível no mapa de ingredientes do cliente
+	            Ingrediente ingredienteDisponivel = ingredientesDisponiveis.get(ingredienteReceita.getNome());
 
-						if (quantidadeDisponivel.maiorOuIgualA(quantidadeReceita)) {
-							ingredienteEncontrado = true;
-							break;
-						}
-					}
-				}
+	            if (ingredienteDisponivel != null) {
+	                Quantidade quantidadeDisponivel = ingredienteDisponivel.getQuantidade();
 
-				if (!ingredienteEncontrado) {
-					receitaCompativel = false;
-					break;
-				}
-			}
+	                if (quantidadeDisponivel.maiorOuIgualA(quantidadeReceita)) {
+	                    ingredienteEncontrado = true;
+	                }
+	            }
 
-			if (receitaCompativel) {
-				receitasCompativeis.add(receita);
-			}
-		}
+	            if (!ingredienteEncontrado) {
+	                receitaCompativel = false;
+	                break;
+	            }
+	        }
 
-		return receitasCompativeis;
+	        if (receitaCompativel) {
+	            receitasCompativeis.add(receita);
+	        }
+	    }
+
+	    return receitasCompativeis;
 	}
-
+	
 	public Set<String> getCategorias(List<Receita> receitas) {
 		Set<String> categorias = new HashSet<>();
 		for (Receita receita : receitas) {
@@ -185,147 +180,17 @@ public class SElecaoSupimpa {
 	}
 
 	public List<Receita> inicializarReceitas() {
-		List<Receita> receitas = new ArrayList<>();
-
-		// Receita 1: Bolo Simples
-		List<Ingrediente> ingredientesBolo = new ArrayList<>();
-		ingredientesBolo.add(new Ingrediente("Farinha", new Quantidade(200, new Grama())));
-		ingredientesBolo.add(new Ingrediente("Açúcar", new Quantidade(100, new Grama())));
-		ingredientesBolo.add(new Ingrediente("Leite", new Quantidade(250, new Mililitro())));
-
-		List<String> instrucoesBolo = new ArrayList<>();
-		instrucoesBolo.add("1. Misture todos os ingredientes.");
-		instrucoesBolo.add("2. Asse no forno a 180°C por 30 minutos.");
-		instrucoesBolo.add("3. Deixe esfriar e sirva.");
-
-		List<String> categoriasBolo = new ArrayList<>();
-		categoriasBolo.add("Sobremesa");
-		categoriasBolo.add("Bolo");
-
-		Receita receitaBolo = new Receita("Bolo de Chocolate", ingredientesBolo, instrucoesBolo, categoriasBolo);
-		receitas.add(receitaBolo);
-
-		// Receita 2: Pudim
-		List<Ingrediente> ingredientesPudim = new ArrayList<>();
-		ingredientesPudim.add(new Ingrediente("Leite Condensado", new Quantidade(395, new Grama())));
-		ingredientesPudim.add(new Ingrediente("Leite", new Quantidade(2, new Litro())));
-		ingredientesPudim.add(new Ingrediente("Ovos", new Quantidade(3, new Unidade())));
-
-		List<String> instrucoesPudim = new ArrayList<>();
-		instrucoesPudim.add("1. Bata todos os ingredientes no liquidificador.");
-		instrucoesPudim.add("2. Despeje a mistura em uma forma caramelizada.");
-		instrucoesPudim.add("3. Asse em banho-maria a 180°C por 1 hora.");
-		instrucoesPudim.add("4. Deixe esfriar e desenforme.");
-
-		List<String> categoriasPudim = new ArrayList<>();
-		categoriasPudim.add("Sobremesa");
-		categoriasPudim.add("Pudim");
-
-		Receita receitaPudim = new Receita("Pudim de Leite Condensado", ingredientesPudim, instrucoesPudim,
-				categoriasPudim);
-		receitas.add(receitaPudim);
-
-		// Receita 3: Massa de Pizza
-		List<Ingrediente> ingredientesPizza = new ArrayList<>();
-		ingredientesPizza.add(new Ingrediente("Farinha de trigo", new Quantidade(300, new Grama())));
-		ingredientesPizza.add(new Ingrediente("Água morna", new Quantidade(200, new Mililitro())));
-		ingredientesPizza.add(new Ingrediente("Fermento biológico", new Quantidade(10, new Grama())));
-		ingredientesPizza.add(new Ingrediente("Sal", new Quantidade(5, new Grama())));
-		ingredientesPizza.add(new Ingrediente("Azeite de oliva", new Quantidade(30, new Mililitro())));
-
-		List<String> instrucoesPizza = new ArrayList<>();
-		instrucoesPizza.add("1. Dissolva o fermento na água morna.");
-		instrucoesPizza.add("2. Em uma tigela grande, misture a farinha e o sal.");
-		instrucoesPizza
-				.add("3. Adicione a mistura de fermento e água à tigela e amasse até formar uma massa homogênea.");
-		instrucoesPizza.add("4. Cubra a massa com um pano úmido e deixe descansar por 1 hora.");
-		instrucoesPizza.add(
-				"5. Abra a massa em uma superfície enfarinhada, adicione o molho de tomate e os ingredientes de sua escolha.");
-		instrucoesPizza.add("6. Asse no forno a 220°C por 15-20 minutos.");
-
-		List<String> categoriasPizza = new ArrayList<>();
-		categoriasPizza.add("Prato Principal");
-		categoriasPizza.add("Pizza");
-
-		Receita receitaPizza = new Receita("Massa de Pizza", ingredientesPizza, instrucoesPizza, categoriasPizza);
-		receitas.add(receitaPizza);
-
-		// Receita 4: Salada Caesar
-		List<Ingrediente> ingredientesSalada = new ArrayList<>();
-		ingredientesSalada.add(new Ingrediente("Alface romana", new Quantidade(1, new Unidade())));
-		ingredientesSalada.add(new Ingrediente("Croutons", new Quantidade(50, new Grama())));
-		ingredientesSalada.add(new Ingrediente("Queijo parmesão ralado", new Quantidade(30, new Grama())));
-		ingredientesSalada.add(new Ingrediente("Peito de frango grelhado", new Quantidade(200, new Grama())));
-		ingredientesSalada.add(new Ingrediente("Molho Caesar", new Quantidade(60, new Mililitro())));
-
-		List<String> instrucoesSalada = new ArrayList<>();
-		instrucoesSalada.add("1. Lave e rasgue as folhas de alface.");
-		instrucoesSalada.add("2. Misture as folhas de alface, croutons, queijo parmesão e peito de frango grelhado.");
-		instrucoesSalada.add("3. Regue com molho Caesar e misture bem.");
-		instrucoesSalada.add("4. Sirva imediatamente.");
-
-		List<String> categoriasSalada = new ArrayList<>();
-		categoriasSalada.add("Salada");
-		categoriasSalada.add("Prato Principal");
-
-		Receita receitaSalada = new Receita("Salada Caesar", ingredientesSalada, instrucoesSalada, categoriasSalada);
-		receitas.add(receitaSalada);
-
-		// Receita 5: Sopa de Abóbora
-		List<Ingrediente> ingredientesSopa = new ArrayList<>();
-		ingredientesSopa.add(new Ingrediente("Abóbora", new Quantidade(500, new Grama())));
-		ingredientesSopa.add(new Ingrediente("Cebola", new Quantidade(1, new Unidade())));
-		ingredientesSopa.add(new Ingrediente("Dente de Alho", new Quantidade(2, new Unidade())));
-		ingredientesSopa.add(new Ingrediente("Caldo de galinha", new Quantidade(1, new Litro())));
-		ingredientesSopa.add(new Ingrediente("Creme de leite", new Quantidade(200, new Mililitro())));
-		ingredientesSopa.add(new Ingrediente("Azeite de oliva", new Quantidade(30, new Mililitro())));
-		ingredientesSopa.add(new Ingrediente("Sal e pimenta", new Quantidade(1, new Unidade())));
-
-		List<String> instrucoesSopa = new ArrayList<>();
-		instrucoesSopa.add("1. Descasque e corte a abóbora, a cebola e o alho.");
-		instrucoesSopa.add("2. Em uma panela, aqueça o azeite de oliva e refogue a cebola e o alho até dourarem.");
-		instrucoesSopa
-				.add("3. Adicione a abóbora e o caldo de galinha à panela e cozinhe até que a abóbora esteja macia.");
-		instrucoesSopa.add("4. Use um liquidificador ou mixer para triturar a sopa até ficar bem cremosa.");
-		instrucoesSopa.add("5. Retorne a sopa à panela, adicione o creme de leite, e aqueça até ficar bem quente.");
-		instrucoesSopa.add("6. Tempere com sal e pimenta a gosto.");
-		instrucoesSopa.add("7. Sirva quente.");
-
-		List<String> categoriasSopa = new ArrayList<>();
-		categoriasSopa.add("Sopa");
-		categoriasSopa.add("Prato Principal");
-
-		Receita receitaSopa = new Receita("Sopa de Abóbora", ingredientesSopa, instrucoesSopa, categoriasSopa);
-		receitas.add(receitaSopa);
-
-		// Receita 6: Salada de Frutas
-		List<Ingrediente> ingredientesSaladaFrutas = new ArrayList<>();
-		ingredientesSaladaFrutas.add(new Ingrediente("Maçã", new Quantidade(2, new Unidade())));
-		ingredientesSaladaFrutas.add(new Ingrediente("Banana", new Quantidade(2, new Unidade())));
-		ingredientesSaladaFrutas.add(new Ingrediente("Laranja", new Quantidade(2, new Unidade())));
-		ingredientesSaladaFrutas.add(new Ingrediente("Uva", new Quantidade(100, new Grama())));
-		ingredientesSaladaFrutas.add(new Ingrediente("Mel", new Quantidade(30, new Mililitro())));
-		ingredientesSaladaFrutas.add(new Ingrediente("Suco de limão", new Quantidade(30, new Mililitro())));
-
-		List<String> instrucoesSaladaFrutas = new ArrayList<>();
-		instrucoesSaladaFrutas.add("1. Descasque e corte as frutas em pedaços.");
-		instrucoesSaladaFrutas.add("2. Misture as frutas em uma tigela.");
-		instrucoesSaladaFrutas.add("3. Regue com suco de limão e mel.");
-		instrucoesSaladaFrutas.add("4. Misture bem e leve à geladeira por 30 minutos antes de servir.");
-
-		List<String> categoriasSaladaFrutas = new ArrayList<>();
-		categoriasSaladaFrutas.add("Sobremesa");
-		categoriasSaladaFrutas.add("Salada de Frutas");
-
-		Receita receitaSaladaFrutas = new Receita("Salada de Frutas", ingredientesSaladaFrutas, instrucoesSaladaFrutas,
-				categoriasSaladaFrutas);
-		receitas.add(receitaSaladaFrutas);
-
+		List<Receita> receitas = InicializadorReceitas.inicializarReceitas();
+		
 		return receitas;
 	}
 
 	public List<Receita> inicializarReceitas(String nomeArquivo) {
 		return carregarReceitas(nomeArquivo);
+	}
+	
+	public void adicionarReceita(Receita receita) {
+		receitas.add(receita);
 	}
 
 	public void salvarReceitas(List<Receita> receitas, String nomeArquivo) {
@@ -355,56 +220,9 @@ public class SElecaoSupimpa {
 			return null; //
 		}
 	}
-
-	public void recomendarReceitasParaCliente() {
-		// Coleta os ingredientes do cliente
-		Set<Ingrediente> ingredientesCliente = coletarIngredientesDoCliente();
-
-		// Encontra receitas compatíveis com os ingredientes do cliente
-		List<Receita> receitasCompativeis = encontrarReceitasCompativeis(ingredientesCliente, receitas);
-
-		if (receitasCompativeis.isEmpty()) {
-			System.out.println(
-					"Desculpe, não encontramos nenhuma receita compatível com os ingredientes que você possui.");
-		} else {
-			System.out.println("Receitas compatíveis:");
-
-			for (int i = 0; i < receitasCompativeis.size(); i++) {
-				System.out.println((i + 1) + ". " + receitasCompativeis.get(i).getNome());
-			}
-
-			System.out.print("Escolha o número da receita que você deseja preparar (ou 'sair' para encerrar): ");
-			try (Scanner scanner = new Scanner(System.in)) {
-				String escolha = scanner.nextLine();
-
-				if (escolha.equalsIgnoreCase("sair")) {
-					return; // Encerra o programa
-				}
-
-				int escolhaNumero = Integer.parseInt(escolha);
-
-				if (escolhaNumero < 1 || escolhaNumero > receitasCompativeis.size()) {
-					System.out.println("Opção inválida. Por favor, escolha um número válido.");
-					return;
-				}
-
-				// Obtém a receita escolhida pelo cliente
-				Receita receitaEscolhida = receitasCompativeis.get(escolhaNumero - 1);
-
-				// Exibe os detalhes da receita escolhida
-				System.out.println("Você escolheu a receita: " + receitaEscolhida.getNome());
-				System.out.println("Ingredientes:");
-				for (Ingrediente ingrediente : receitaEscolhida.getIngredientes()) {
-					System.out.println("- " + ingrediente.getNome() + ": " + ingrediente.getQuantidade());
-				}
-				System.out.println("Instruções:");
-				for (String instrucao : receitaEscolhida.getInstrucoes()) {
-					System.out.println(instrucao);
-				}
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-		}
+	
+	public void resetarReceitas() {
+		receitas = inicializarReceitas();
 	}
 
 	public List<Receita> getReceitas() {		
@@ -413,5 +231,23 @@ public class SElecaoSupimpa {
 	
 	public List<Receita> getReceitasCliente() {		
 		return receitasCliente;
+	}
+
+	public void atualizarReceita(Receita receitaExistente) {
+		
+	}
+
+	public void removerReceita(Receita receitaExistente) {
+	    Iterator<Receita> iterator = receitas.iterator();
+	    while (iterator.hasNext()) {
+	        Receita receita = iterator.next();
+	        if (receita.equals(receitaExistente)) {
+	            iterator.remove();
+	            System.out.println("Receita removida com sucesso: " + receitaExistente.getNome());
+	            salvarReceitas(receitas, "receitas.bin"); // Salva as receitas atualizadas no arquivo
+	            return;
+	        }
+	    }
+	    System.out.println("Receita não encontrada: " + receitaExistente.getNome());
 	}
 }

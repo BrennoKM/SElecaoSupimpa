@@ -67,4 +67,23 @@ public class Receita implements Serializable{
 	    }
 	    return false;
 	}
+
+	public void setNome(String novoNomeReceita) {
+		this.nome = novoNomeReceita;
+	}
+
+	public void setInstrucoes(List<String> instrucoesEditadas) {
+		this.instrucoes = instrucoesEditadas;
+		
+	}
+
+	public void setIngredientes(List<Ingrediente> ingredientesEditados) {
+		this.ingredientes = ingredientesEditados;
+		
+	}
+
+	public void setCategorias(List<String> categoriasEditadas) {
+		this.categorias = categoriasEditadas;
+		
+	}
 }
