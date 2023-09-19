@@ -17,7 +17,11 @@ public class Ingrediente implements Serializable{
         this.quantidade = quantidade;
     }
 
-    public String getNome() {
+    public Ingrediente(String nomeIngrediente) {
+		this.nome = nomeIngrediente;
+	}
+
+	public String getNome() {
         return nome;
     }
 
