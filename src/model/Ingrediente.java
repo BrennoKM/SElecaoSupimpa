@@ -47,7 +47,7 @@ public class Ingrediente implements Serializable{
         sb.append(nome);
 
         if (quantidade != null) {
-            sb.append(", Quantidade: ").append(quantidade.getValor());
+            sb.append(", 	\t").append(quantidade.getValor());
             sb.append(" ").append(quantidade.getUnidade().getNome());
         }
 
