@@ -19,12 +19,15 @@ import model.Ingrediente;
 import model.Quantidade;
 import model.Receita;
 import model.SElecaoSupimpa;
+import unidades.Colher;
+import unidades.ColherDeCha;
 import unidades.Grama;
 import unidades.Litro;
 import unidades.Mililitro;
 import unidades.Quilograma;
 import unidades.Unidade;
 import unidades.UnidadeMedida;
+import unidades.Xicara;
 
 public class SE {
 
@@ -548,7 +551,7 @@ public class SE {
 
 	public static UnidadeMedida obterUnidade(String nomeIngrediente) {
 		UnidadeMedida unidade = null;
-		String[] opcoesUnidade = { "Quilograma", "Grama", "Litro", "Mililitro", "Unidade" };
+		String[] opcoesUnidade = { "Quilograma", "Grama", "Litro", "Mililitro", "Unidade", "Xícara", "Colher", "Colher de chá" };
 		String unidadeEscolhida = (String) JOptionPane.showInputDialog(null,
 				"Escolha a unidade de medida para " + nomeIngrediente + ":", "Escolher Unidade de Medida",
 				JOptionPane.QUESTION_MESSAGE, null, opcoesUnidade, opcoesUnidade[0] // Valor padrão
@@ -570,6 +573,15 @@ public class SE {
 				break;
 			case "Unidade":
 				unidade = new Unidade();
+				break;
+			case "Xícara":
+				unidade = new Xicara();
+				break;
+			case "Colher":
+				unidade = new Colher();
+				break;
+			case "Colher de chá":
+				unidade = new ColherDeCha();
 				break;
 			default:
 				JOptionPane.showMessageDialog(null, "Opção de unidade inválida.");
