@@ -41,4 +41,16 @@ public class Ingrediente implements Serializable{
 		this.nome = novoNomeIngrediente;
 		
 	}
+	
+	public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(nome);
+
+        if (quantidade != null) {
+            sb.append(", Quantidade: ").append(quantidade.getValor());
+            sb.append(" ").append(quantidade.getUnidade().getNome());
+        }
+
+        return sb.toString();
+    }
 }

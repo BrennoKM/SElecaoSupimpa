@@ -37,4 +37,9 @@ public class Quantidade implements Serializable{
 	public Class<? extends UnidadeMedida> getUnidadeMedida() {
 		return unidade.getClass();
 	}
+
+	public void setUnidade(UnidadeMedida novaUnidade) {
+		this.unidade = novaUnidade;
+		
+	}
 }

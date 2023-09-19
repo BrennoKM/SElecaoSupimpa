@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 import model.Ingrediente;
 import model.Quantidade;
@@ -42,8 +47,6 @@ public class SE {
 				menuUsuarioComum(se);
 				break;
 			default:
-				// JOptionPane.showMessageDialog(null, "Opção inválida para escolha do tipo de
-				// usuário.");
 				continuar = false; // Para sair do loop
 				break;
 			}
@@ -189,12 +192,13 @@ public class SE {
 	}
 
 	private static void visualizarReceitas() {
+
 		if (receitasCompativeis == null) {
 			JOptionPane.showMessageDialog(null, "Não há receitas disponíveis para visualização.");
 			return;
 		}
 
-		List<Receita> receitas = new ArrayList<>(receitasCompativeis); // Obtenha a lista de receitas do sistema
+		List<Receita> receitas = new ArrayList<>(receitasCompativeis);
 
 		if (receitas.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Não há receitas disponíveis para visualização.");
@@ -220,8 +224,7 @@ public class SE {
 	}
 
 	private static void visualizarReceitas(SElecaoSupimpa se) {
-		List<Receita> receitas = se.getReceitas(); // Obtenha a lista de receitas do sistema
-
+		List<Receita> receitas = se.getReceitas();
 		if (receitas.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Não há receitas disponíveis para visualização.");
 		} else {
@@ -258,7 +261,6 @@ public class SE {
 			return;
 		}
 
-		// Solicite ao usuário que escolha uma receita
 		String[] nomesReceitas = receitas.stream().map(Receita::getNome).toArray(String[]::new);
 		String receitaSelecionada = (String) JOptionPane.showInputDialog(null, "Escolha a receita que deseja editar:",
 				"Editar Receita", JOptionPane.QUESTION_MESSAGE, null, nomesReceitas, nomesReceitas[0] // Valor padrão
@@ -268,27 +270,25 @@ public class SE {
 			return; // O usuário cancelou a seleção
 		}
 
-		// Encontre a receita selecionada
 		Receita receitaExistente = receitas.stream().filter(receita -> receita.getNome().equals(receitaSelecionada))
 				.findFirst().orElse(null);
-		
+
 		if (receitaExistente == null) {
 			JOptionPane.showMessageDialog(null, "A receita não foi encontrada.");
 			return;
 		}
 
-		Receita r = new Receita(receitaExistente.getNome(), receitaExistente.getIngredientes(), receitaExistente.getInstrucoes(), receitaExistente.getCategorias());
-		
+		Receita r = new Receita(receitaExistente.getNome(), receitaExistente.getIngredientes(),
+				receitaExistente.getInstrucoes(), receitaExistente.getCategorias());
+
 		while (true) {
-			// Solicite ao usuário ação desejada
 			String[] opcoesAcao = { "Visualizar Receita", "Editar Nome da Receita", "Editar Ingredientes",
-					"Editar Instruções", "Editar Categorias", "Concluir Edição", "Cancelar"};
+					"Editar Instruções", "Editar Categorias", "Concluir Edição", "Cancelar" };
 			int escolhaAcao = JOptionPane.showOptionDialog(null, "O que deseja fazer com a receita?", "Editar Receita",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opcoesAcao, opcoesAcao[0]);
 
 			switch (escolhaAcao) {
 			case 0:
-				// Exiba a receita atual para o usuário
 				String receitaAtual = receitaExistente.toString();
 
 				JOptionPane.showMessageDialog(null, "Receita Atual:\n\n" + receitaAtual, "Visualizar Receita",
@@ -318,75 +318,60 @@ public class SE {
 				JOptionPane.showMessageDialog(null, "Receita editada com sucesso!");
 				return;
 			case 6:
-            	receitaExistente = new Receita(r.getNome(), r.getIngredientes(), r.getInstrucoes(), r.getCategorias());
-            	return;
+				receitaExistente = new Receita(r.getNome(), r.getIngredientes(), r.getInstrucoes(), r.getCategorias());
+				return;
 			default:
 				return; // O usuário cancelou a edição
 			}
 		}
 	}
-	
+
 	public static void editarReceita(SElecaoSupimpa se, Receita receitaExistente) {
-		Receita r = new Receita(receitaExistente.getNome(), receitaExistente.getIngredientes(), receitaExistente.getInstrucoes(), receitaExistente.getCategorias());
-	    while (true) {
-	        // Solicite ao usuário ação desejada
-	        String[] opcoesAcao = {"Visualizar Receita", "Editar Nome da Receita", "Editar Ingredientes",
-	                "Editar Instruções", "Editar Categorias", "Concluir Edição", "Cancelar"};
-	        int escolhaAcao = JOptionPane.showOptionDialog(
-	                null,
-	                "O que deseja fazer com a receita?",
-	                "Editar Receita",
-	                JOptionPane.DEFAULT_OPTION,
-	                JOptionPane.QUESTION_MESSAGE,
-	                null,
-	                opcoesAcao,
-	                opcoesAcao[0]
-	        );
+		Receita r = new Receita(receitaExistente.getNome(), receitaExistente.getIngredientes(),
+				receitaExistente.getInstrucoes(), receitaExistente.getCategorias());
+		while (true) {
+			String[] opcoesAcao = { "Visualizar Receita", "Editar Nome da Receita", "Editar Ingredientes",
+					"Editar Instruções", "Editar Categorias", "Concluir Edição", "Cancelar" };
+			int escolhaAcao = JOptionPane.showOptionDialog(null, "O que deseja fazer com a receita?", "Editar Receita",
+					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opcoesAcao, opcoesAcao[0]);
 
-	        switch (escolhaAcao) {
-	            case 0:
-	                // Exiba a receita atual para o usuário
-	                String receitaAtual = receitaExistente.toString();
+			switch (escolhaAcao) {
+			case 0:
+				String receitaAtual = receitaExistente.toString();
 
-	                JOptionPane.showMessageDialog(
-	                        null,
-	                        "Receita Atual:\n\n" + receitaAtual,
-	                        "Visualizar Receita",
-	                        JOptionPane.INFORMATION_MESSAGE
-	                );
-	                break;
-	            case 1:
-	                String novoNomeReceita = JOptionPane.showInputDialog(
-	                        "Digite o novo nome da receita:",
-	                        receitaExistente.getNome()
-	                );
-	                if (novoNomeReceita != null && !novoNomeReceita.isEmpty()) {
-	                    receitaExistente.setNome(novoNomeReceita);
-	                }
-	                break;
-	            case 2:
-	                List<Ingrediente> ingredientesEditados = editarIngredientes(receitaExistente.getIngredientes());
-	                receitaExistente.setIngredientes(ingredientesEditados);
-	                break;
-	            case 3:
-	                List<String> instrucoesEditadas = editarInstrucoes(receitaExistente.getInstrucoes());
-	                receitaExistente.setInstrucoes(instrucoesEditadas);
-	                break;
-	            case 4:
-	                List<String> categoriasEditadas = editarCategorias(receitaExistente.getCategorias());
-	                receitaExistente.setCategorias(categoriasEditadas);
-	                break;
-	            case 5:
-	                se.atualizarReceita(receitaExistente);
-	                JOptionPane.showMessageDialog(null, "Receita editada com sucesso!");
-	                return;
-	            case 6:
-	            	receitaExistente = new Receita(r.getNome(), r.getIngredientes(), r.getInstrucoes(), r.getCategorias());
-	            	return;
-	            default:
-	                return; // O usuário cancelou a edição
-	        }
-	    }
+				JOptionPane.showMessageDialog(null, "Receita Atual:\n\n" + receitaAtual, "Visualizar Receita",
+						JOptionPane.INFORMATION_MESSAGE);
+				break;
+			case 1:
+				String novoNomeReceita = JOptionPane.showInputDialog("Digite o novo nome da receita:",
+						receitaExistente.getNome());
+				if (novoNomeReceita != null && !novoNomeReceita.isEmpty()) {
+					receitaExistente.setNome(novoNomeReceita);
+				}
+				break;
+			case 2:
+				List<Ingrediente> ingredientesEditados = editarIngredientes(receitaExistente.getIngredientes());
+				receitaExistente.setIngredientes(ingredientesEditados);
+				break;
+			case 3:
+				List<String> instrucoesEditadas = editarInstrucoes(receitaExistente.getInstrucoes());
+				receitaExistente.setInstrucoes(instrucoesEditadas);
+				break;
+			case 4:
+				List<String> categoriasEditadas = editarCategorias(receitaExistente.getCategorias());
+				receitaExistente.setCategorias(categoriasEditadas);
+				break;
+			case 5:
+				se.atualizarReceita(receitaExistente);
+				JOptionPane.showMessageDialog(null, "Receita editada com sucesso!");
+				return;
+			case 6:
+				receitaExistente = new Receita(r.getNome(), r.getIngredientes(), r.getInstrucoes(), r.getCategorias());
+				return;
+			default:
+				return; // O usuário cancelou a edição
+			}
+		}
 	}
 
 	public static void salvarReceitas(SElecaoSupimpa se) {
@@ -429,7 +414,6 @@ public class SE {
 			return;
 		}
 
-		// Solicite ao usuário que escolha uma receita para remover
 		String[] nomesReceitas = receitas.stream().map(Receita::getNome).toArray(String[]::new);
 		String receitaSelecionada = (String) JOptionPane.showInputDialog(null, "Escolha a receita que deseja remover:",
 				"Remover Receita", JOptionPane.QUESTION_MESSAGE, null, nomesReceitas, nomesReceitas[0] // Valor padrão
@@ -439,7 +423,6 @@ public class SE {
 			return; // O usuário cancelou a seleção
 		}
 
-		// Encontre a receita selecionada
 		Receita receitaExistente = receitas.stream().filter(receita -> receita.getNome().equals(receitaSelecionada))
 				.findFirst().orElse(null);
 
@@ -469,7 +452,6 @@ public class SE {
 		String[] categoriasArrayComNenhumaCategoria = Arrays.copyOf(categoriasArray, categoriasArray.length + 1);
 		categoriasArrayComNenhumaCategoria[categoriasArray.length] = "Não especificar";
 
-		// Pergunta ao usuário qual categoria deseja
 		String categoriaEscolhida = (String) JOptionPane.showInputDialog(null, "Escolha a categoria de receitas:",
 				"Escolher Categoria", JOptionPane.QUESTION_MESSAGE, null, categoriasArrayComNenhumaCategoria,
 				categoriasArrayComNenhumaCategoria[0] // Valor padrão
@@ -480,7 +462,6 @@ public class SE {
 		}
 		Set<Ingrediente> ingredientes = new HashSet<>(se.getIngredientes(se.getReceitasCliente()));
 
-		// Use um mapa para rastrear os ingredientes já perguntados
 		Map<String, Ingrediente> ingredientesPerguntados = new HashMap<>();
 
 		boolean ingredientesModificados;
@@ -504,7 +485,7 @@ public class SE {
 					// Remove o ingrediente do mapa de ingredientes perguntados
 					ingredientesPerguntados.remove(ingrediente.getNome());
 					ingredientesModificados = true;
-					break; // Saia do loop e comece novamente após a modificação
+					break; // Sai do loop e comece novamente após a modificação
 				} else {
 					Quantidade quantidade = obterQuantidade(ingrediente);
 					Ingrediente i = new Ingrediente(ingrediente.getNome(), quantidade);
@@ -516,7 +497,6 @@ public class SE {
 
 		receitasCompativeis = se.encontrarReceitasCompativeis();
 
-		// Exibe as receitas filtradas para o usuário
 		if (!receitasCompativeis.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Receitas Compativeis foram encontradas!");
 			System.out.println("Receitas Compativeis:");
@@ -539,7 +519,7 @@ public class SE {
 				double qnt = Double.parseDouble(input);
 				quantidade = new Quantidade(qnt, ingrediente.getUnidade());
 			} else {
-				// O botão de cancelar foi pressionado
+				quantidade = new Quantidade(0, ingrediente.getUnidade());
 			}
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(null, "Quantidade inválida. Insira um número válido.");
@@ -557,7 +537,7 @@ public class SE {
 				double qnt = Double.parseDouble(input);
 				quantidade = new Quantidade(qnt, unidade);
 			} else {
-				// O botão de cancelar foi pressionado
+				quantidade = new Quantidade(0, unidade);
 			}
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(null, "Quantidade inválida. Insira um número válido.");
@@ -600,26 +580,200 @@ public class SE {
 	}
 
 	public static void visualizarIngredientes(SElecaoSupimpa se) {
-		JOptionPane.showMessageDialog(null, "Implementar a lógica para visualizar os ingredientes do usuário comum.");
+		Map<String, Ingrediente> ingredientesCliente = se.getIngredientesCliente();
+
+		if (ingredientesCliente.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Você ainda não possui ingredientes registrados.");
+			return;
+		}
+
+		DefaultListModel<String> ingredientesListModel = new DefaultListModel<>();
+
+		for (Ingrediente ingrediente : ingredientesCliente.values()) {
+			ingredientesListModel.addElement(ingrediente.toString());
+		}
+
+		JList<String> ingredientesList = new JList<>(ingredientesListModel);
+		ingredientesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		JScrollPane scrollPane = new JScrollPane(ingredientesList);
+		scrollPane.setPreferredSize(new Dimension(400, 300));
+
+		JOptionPane.showMessageDialog(null, scrollPane, "Visualizar Ingredientes", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	public static void adicionarIngrediente(SElecaoSupimpa se) {
-		JOptionPane.showMessageDialog(null, "Implementar a lógica para adicionar um novo ingrediente.");
+		Set<Ingrediente> ingredientesDisponiveis = se.getIngredientes(se.getReceitas());
+
+		if (ingredientesDisponiveis.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Não há ingredientes disponíveis para adicionar.");
+			return;
+		}
+
+		String[] nomesIngredientes = ingredientesDisponiveis.stream().map(Ingrediente::getNome).toArray(String[]::new);
+
+		String ingredienteSelecionado = (String) JOptionPane.showInputDialog(null,
+				"Escolha o ingrediente que deseja adicionar:", "Adicionar Ingrediente", JOptionPane.QUESTION_MESSAGE,
+				null, nomesIngredientes, nomesIngredientes[0]);
+
+		if (ingredienteSelecionado != null) {
+			Ingrediente ingredienteEscolhido = ingredientesDisponiveis.stream()
+					.filter(ingrediente -> ingrediente.getNome().equals(ingredienteSelecionado)).findFirst()
+					.orElse(null);
+
+			if (ingredienteEscolhido != null) {
+				Ingrediente i = new Ingrediente(ingredienteEscolhido.getNome(), ingredienteEscolhido.getQuantidade());
+				i.setQuantidade(obterQuantidade(ingredienteEscolhido));
+
+				boolean verif = true;
+				se.addIngredienteCliente(i);
+
+				if (i.getQuantidade().getValor() == 0) {
+					se.removerIngredienteCliente(i.getNome());
+					verif = false;
+				}
+
+				if (verif == true) {
+					JOptionPane.showMessageDialog(null, "Ingrediente adicionado com sucesso.");
+				} else {
+					JOptionPane.showMessageDialog(null, "Operaçao cancelada.");
+				}
+
+				verificarNovasReceitas(se);
+
+			} else {
+				JOptionPane.showMessageDialog(null, "Ingrediente não encontrado.");
+			}
+		}
 	}
 
 	public static void removerIngrediente(SElecaoSupimpa se) {
-		JOptionPane.showMessageDialog(null, "Implementar a lógica para remover um ingrediente.");
+		Map<String, Ingrediente> ingredientesCliente = se.getIngredientesCliente();
+
+		String[] nomesIngredientes = ingredientesCliente.keySet().toArray(new String[0]);
+
+		String ingredienteSelecionado = (String) JOptionPane.showInputDialog(null,
+				"Escolha o ingrediente que deseja remover:", "Remover Ingrediente", JOptionPane.QUESTION_MESSAGE, null,
+				nomesIngredientes, nomesIngredientes[0]);
+
+		if (ingredienteSelecionado != null) {
+			se.removerIngredienteCliente(ingredienteSelecionado);
+
+			verificarNovasReceitas(se);
+		}
 	}
 
 	public static void editarIngrediente(SElecaoSupimpa se) {
-		JOptionPane.showMessageDialog(null, "Implementar a lógica para editar um ingrediente.");
+		Map<String, Ingrediente> ingredientesCliente = se.getIngredientesCliente();
+
+		if (ingredientesCliente.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Não há ingredientes para editar.");
+			return;
+		}
+
+		String[] nomesIngredientes = ingredientesCliente.keySet().toArray(new String[0]);
+
+		while (true) {
+			String ingredienteSelecionado = (String) JOptionPane.showInputDialog(null,
+					"Escolha o ingrediente que deseja editar ou cancele para sair:", "Editar Ingrediente",
+					JOptionPane.QUESTION_MESSAGE, null, nomesIngredientes, nomesIngredientes[0]);
+
+			if (ingredienteSelecionado == null) {
+				break; // O usuário escolheu cancelar
+			}
+
+			Ingrediente ingredienteExistente = ingredientesCliente.get(ingredienteSelecionado);
+			Ingrediente i;
+			if (ingredienteExistente != null) {
+				i = new Ingrediente(ingredienteExistente.getNome(), ingredienteExistente.getQuantidade());
+				while (true) {
+					String[] opcoesAcao = { "Editar Quantidade", "Editar Unidade", "Concluir Edição",
+							"Cancelar Edição" };
+					int escolhaAcao = JOptionPane.showOptionDialog(null,
+							"O que deseja fazer com o ingrediente?\n" + ingredienteExistente.toString(),
+							"Editar Ingrediente", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+							opcoesAcao, opcoesAcao[0]);
+
+					switch (escolhaAcao) {
+					case 0:
+						// Editar Quantidade
+						Quantidade qnt = ingredienteExistente.getQuantidade();
+						Quantidade novaQuantidade = obterQuantidade(ingredienteExistente);
+						if (novaQuantidade != null) {
+							// i = new Ingrediente(ingredienteExistente.getNome(),
+							// ingredienteExistente.getQuantidade());
+							ingredienteExistente.setQuantidade(novaQuantidade);
+
+							// ingredienteEscolhido.setQuantidade(obterQuantidade(ingredienteEscolhido));
+
+							boolean verif = true;
+							// se.addIngredienteCliente(ingredienteExistente);
+
+							if (ingredienteExistente.getQuantidade().getValor() == 0) {
+								ingredienteExistente.setQuantidade(qnt);
+								verif = false;
+							}
+
+							if (verif == true) {
+								JOptionPane.showMessageDialog(null, "Quantidade editada com sucesso.");
+							} else {
+								JOptionPane.showMessageDialog(null, "Operaçao cancelada.");
+							}
+
+							verificarNovasReceitas(se);
+
+						}
+						break;
+					case 1:
+						// Editar Unidade
+						UnidadeMedida novaUnidade = obterUnidade(ingredienteExistente.getNome());
+						if (novaUnidade != null) {
+							ingredienteExistente.getQuantidade().setUnidade(novaUnidade);
+							JOptionPane.showMessageDialog(null, "Unidade editada com sucesso.");
+						}
+						break;
+					case 2:
+						JOptionPane.showMessageDialog(null, "Edição concluída para " + ingredienteExistente.getNome());
+						break;
+					default:
+						ingredienteExistente = new Ingrediente(i.getNome(), i.getQuantidade());
+						break;
+					}
+
+					if (escolhaAcao == 2 || escolhaAcao == 3) {
+						break; // Sai do loop interno se a edição for concluída ou cancelada
+					}
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Ingrediente não encontrado.");
+			}
+			verificarNovasReceitas(se);
+		}
+	}
+
+	public static void verificarNovasReceitas(SElecaoSupimpa se) {
+		int tam = 0;
+		if (receitasCompativeis != null) {
+			if (!receitasCompativeis.isEmpty() && receitasCompativeis != null) {
+				tam = receitasCompativeis.size();
+			}
+		}
+		receitasCompativeis = se.encontrarReceitasCompativeis();
+		if (receitasCompativeis != null) {
+			if (tam != receitasCompativeis.size() && receitasCompativeis != null) {
+				if (tam > receitasCompativeis.size()) {
+					JOptionPane.showMessageDialog(null, "Alguma receita foi perdida.");
+				} else {
+					JOptionPane.showMessageDialog(null, "Nova receita encontrada!!");
+				}
+			}
+		}
 	}
 
 	public static List<Ingrediente> editarIngredientes(List<Ingrediente> ingredientes) {
 		List<Ingrediente> ingredientesEditados = new ArrayList<>(ingredientes);
 
 		while (true) {
-			// Exiba a lista de ingredientes e permita ao usuário escolher o que fazer
 			String[] opcoesAcao = { "Editar Ingrediente", "Adicionar Ingrediente", "Remover Ingrediente",
 					"Concluir Edição" };
 			int escolhaAcao = JOptionPane.showOptionDialog(null, "O que deseja fazer com os ingredientes?",
@@ -628,7 +782,6 @@ public class SE {
 
 			switch (escolhaAcao) {
 			case 0:
-				// Editar um ingrediente existente
 				String[] nomesIngredientes = ingredientesEditados.stream().map(Ingrediente::getNome)
 						.toArray(String[]::new);
 				String ingredienteSelecionado = (String) JOptionPane.showInputDialog(null,
@@ -639,7 +792,6 @@ public class SE {
 					break;
 				}
 
-				// Encontre o ingrediente selecionado
 				Ingrediente ingredienteExistente = ingredientesEditados.stream()
 						.filter(ingrediente -> ingrediente.getNome().equals(ingredienteSelecionado)).findFirst()
 						.orElse(null);
@@ -691,7 +843,6 @@ public class SE {
 		List<String> instrucoesEditadas = new ArrayList<>(instrucoes);
 
 		while (true) {
-			// Exiba a lista de instruções e permita ao usuário escolher o que fazer
 			String[] opcoesAcao = { "Editar Instrução", "Adicionar Instrução", "Remover Instrução", "Concluir Edição" };
 			int escolhaAcao = JOptionPane.showOptionDialog(null, "O que deseja fazer com as instruções?",
 					"Editar Instruções", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opcoesAcao,
@@ -699,7 +850,6 @@ public class SE {
 
 			switch (escolhaAcao) {
 			case 0:
-				// Editar uma instrução existente
 				String[] instrucoesArray = instrucoesEditadas.toArray(new String[0]);
 				String instrucaoSelecionada = (String) JOptionPane.showInputDialog(null,
 						"Escolha a instrução que deseja editar:", "Editar Instrução", JOptionPane.QUESTION_MESSAGE,
@@ -709,14 +859,12 @@ public class SE {
 					break;
 				}
 
-				// Encontre a instrução selecionada
 				int indiceInstrucaoSelecionada = instrucoesEditadas.indexOf(instrucaoSelecionada);
 				if (indiceInstrucaoSelecionada == -1) {
 					JOptionPane.showMessageDialog(null, "A instrução não foi encontrada.");
 					break;
 				}
 
-				// Solicite ao usuário a nova versão da instrução
 				String novaInstrucaoEditada = JOptionPane.showInputDialog("Digite a nova versão da instrução:",
 						instrucaoSelecionada);
 
@@ -724,7 +872,6 @@ public class SE {
 					if (!novaInstrucaoEditada.isEmpty()) {
 						instrucoesEditadas.set(indiceInstrucaoSelecionada, novaInstrucaoEditada);
 					} else {
-						// Remova a instrução se a nova versão for uma string vazia
 						instrucoesEditadas.remove(indiceInstrucaoSelecionada);
 					}
 				}
@@ -747,7 +894,6 @@ public class SE {
 		List<String> categoriasEditadas = new ArrayList<>(categorias);
 
 		while (true) {
-			// Exiba a lista de categorias e permita ao usuário escolher o que fazer
 			String[] opcoesAcao = { "Editar Categoria", "Adicionar Categoria", "Remover Categoria", "Concluir Edição" };
 			int escolhaAcao = JOptionPane.showOptionDialog(null, "O que deseja fazer com as categorias?",
 					"Editar Categorias", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opcoesAcao,
@@ -755,7 +901,6 @@ public class SE {
 
 			switch (escolhaAcao) {
 			case 0:
-				// Editar uma categoria existente
 				String[] categoriasArray = categoriasEditadas.toArray(new String[0]);
 				String categoriaSelecionada = (String) JOptionPane.showInputDialog(null,
 						"Escolha a categoria que deseja editar:", "Editar Categoria", JOptionPane.QUESTION_MESSAGE,
@@ -765,14 +910,12 @@ public class SE {
 					break;
 				}
 
-				// Encontre a categoria selecionada
 				int indiceCategoriaSelecionada = categoriasEditadas.indexOf(categoriaSelecionada);
 				if (indiceCategoriaSelecionada == -1) {
 					JOptionPane.showMessageDialog(null, "A categoria não foi encontrada.");
 					break;
 				}
 
-				// Solicite ao usuário a nova versão da categoria
 				String novaCategoriaEditada = JOptionPane.showInputDialog("Digite a nova versão da categoria:",
 						categoriaSelecionada);
 
@@ -780,7 +923,6 @@ public class SE {
 					if (!novaCategoriaEditada.isEmpty()) {
 						categoriasEditadas.set(indiceCategoriaSelecionada, novaCategoriaEditada);
 					} else {
-						// Remova a categoria se a nova versão for uma string vazia
 						categoriasEditadas.remove(indiceCategoriaSelecionada);
 					}
 				}
@@ -803,8 +945,8 @@ public class SE {
 		String nomeIngrediente = JOptionPane.showInputDialog("Digite o nome do novo ingrediente:");
 		if (nomeIngrediente != null && !nomeIngrediente.isEmpty()) {
 			UnidadeMedida unidade = obterUnidade(nomeIngrediente);
-			Quantidade quantidade = obterQuantidade(nomeIngrediente, unidade); // Passar null para criar uma nova
-																				// quantidade
+			Quantidade quantidade = obterQuantidade(nomeIngrediente, unidade);
+
 			if (quantidade != null) {
 				Ingrediente novoIngrediente = new Ingrediente(nomeIngrediente, quantidade);
 				ingredientes.add(novoIngrediente);

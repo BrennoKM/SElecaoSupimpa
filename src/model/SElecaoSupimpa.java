@@ -21,89 +21,96 @@ public class SElecaoSupimpa {
 	List<Receita> receitas;
 	List<Receita> receitasCliente;
 	Map<String, Ingrediente> ingredientesCliente;
-	
+
 	public SElecaoSupimpa() {
 		receitas = carregarReceitas("receitas.bin");
 		ingredientesCliente = new HashMap<>();
-		//if (receitas == null) {
-		//	receitas = inicializarReceitas();
-		//}
+		// if (receitas == null) {
+		// receitas = inicializarReceitas();
+		// }
 		recarregarReceitasCliente();
 	}
-	
+
 	public void addIngredienteCliente(Ingrediente ingrediente) {
 		ingredientesCliente.put(ingrediente.getNome(), ingrediente);
 	}
 	
-	public Map<String, Ingrediente> getIngredientesCliente(){
+	public void removerIngredienteCliente(String nomeIngrediente) {
+	    if (ingredientesCliente.containsKey(nomeIngrediente)) {
+	        ingredientesCliente.remove(nomeIngrediente);
+	    } 
+	}
+
+	public Map<String, Ingrediente> getIngredientesCliente() {
 		return ingredientesCliente;
 	}
-	public List<Receita> recarregarReceitasCliente(){
+
+	public List<Receita> recarregarReceitasCliente() {
 		receitasCliente = new ArrayList<>(receitas);
 		return receitasCliente;
 	}
-	
+
 	public void removerReceitasIngredienteCliente(Ingrediente ingrediente) {
-	    Iterator<Receita> iterator = receitasCliente.iterator();
-	    while (iterator.hasNext()) {
-	        Receita receita = iterator.next();
-	        if (receita.contemIngrediente(ingrediente)) {
-	            iterator.remove();
-	        }
-	    }
+		Iterator<Receita> iterator = receitasCliente.iterator();
+		while (iterator.hasNext()) {
+			Receita receita = iterator.next();
+			if (receita.contemIngrediente(ingrediente)) {
+				iterator.remove();
+			}
+		}
 	}
-	
+
 	public void filtrarReceitasIngredienteCategoria(String categoria) {
-	    Iterator<Receita> iterator = receitasCliente.iterator();
-	    while (iterator.hasNext()) {
-	        Receita receita = iterator.next();
-	        if (!receita.getCategorias().contains(categoria)) {
-	            iterator.remove();
-	        }
-	    }
+		Iterator<Receita> iterator = receitasCliente.iterator();
+		while (iterator.hasNext()) {
+			Receita receita = iterator.next();
+			if (!receita.getCategorias().contains(categoria)) {
+				iterator.remove();
+			}
+		}
 	}
-	
-	public List<Receita> encontrarReceitasCompativeis(){
+
+	public List<Receita> encontrarReceitasCompativeis() {
 		return encontrarReceitasCompativeis(getIngredientesCliente(), receitas);
 	}
 
 	private List<Receita> encontrarReceitasCompativeis(Map<String, Ingrediente> ingredientesDisponiveis,
-	        List<Receita> receitas) {
-	    List<Receita> receitasCompativeis = new ArrayList<>();
+			List<Receita> receitas) {
+		List<Receita> receitasCompativeis = new ArrayList<>();
 
-	    for (Receita receita : receitas) {
-	        List<Ingrediente> ingredientesReceita = receita.getIngredientes();
-	        boolean receitaCompativel = true;
+		for (Receita receita : receitas) {
+			List<Ingrediente> ingredientesReceita = receita.getIngredientes();
+			boolean receitaCompativel = true;
 
-	        for (Ingrediente ingredienteReceita : ingredientesReceita) {
-	            Quantidade quantidadeReceita = ingredienteReceita.getQuantidade();
-	            boolean ingredienteEncontrado = false;
+			for (Ingrediente ingredienteReceita : ingredientesReceita) {
+				Quantidade quantidadeReceita = ingredienteReceita.getQuantidade();
+				boolean ingredienteEncontrado = false;
 
-	            // Verifica se o ingrediente está disponível no mapa de ingredientes do cliente
-	            Ingrediente ingredienteDisponivel = ingredientesDisponiveis.get(ingredienteReceita.getNome());
+				// Verifica se o ingrediente está disponível no mapa de ingredientes do cliente
+				Ingrediente ingredienteDisponivel = ingredientesDisponiveis.get(ingredienteReceita.getNome());
 
-	            if (ingredienteDisponivel != null) {
-	                Quantidade quantidadeDisponivel = ingredienteDisponivel.getQuantidade();
+				if (ingredienteDisponivel != null) {
+					Quantidade quantidadeDisponivel = ingredienteDisponivel.getQuantidade();
 
-	                if (quantidadeDisponivel.maiorOuIgualA(quantidadeReceita)) {
-	                    ingredienteEncontrado = true;
-	                }
-	            }
+					if (quantidadeDisponivel.maiorOuIgualA(quantidadeReceita)) {
+						ingredienteEncontrado = true;
+					}
+				}
 
-	            if (!ingredienteEncontrado) {
-	                receitaCompativel = false;
-	                break;
-	            }
-	        }
+				if (!ingredienteEncontrado) {
+					receitaCompativel = false;
+					break;
+				}
+			}
 
-	        if (receitaCompativel) {
-	            receitasCompativeis.add(receita);
-	        }
-	    }
+			if (receitaCompativel) {
+				receitasCompativeis.add(receita);
+			}
+		}
 
-	    return receitasCompativeis;
+		return receitasCompativeis;
 	}
-	
+
 	public Set<String> getCategorias(List<Receita> receitas) {
 		Set<String> categorias = new HashSet<>();
 		for (Receita receita : receitas) {
@@ -111,84 +118,84 @@ public class SElecaoSupimpa {
 		}
 		return categorias;
 	}
-	
+
 	public Set<Ingrediente> getIngredientes(List<Receita> receitas) {
-	    Set<Ingrediente> ingredientes = new HashSet<>();
-	    for (Receita receita : receitas) {
-	        for (Ingrediente ingrediente : receita.getIngredientes()) {
-	            ingredientes.add(ingrediente);
-	        }
-	    }
-	    return ingredientes;
+		Set<Ingrediente> ingredientes = new HashSet<>();
+		for (Receita receita : receitas) {
+			for (Ingrediente ingrediente : receita.getIngredientes()) {
+				ingredientes.add(ingrediente);
+			}
+		}
+		return ingredientes;
 	}
 
-
 	public Map<String, UnidadeMedida> criarMapaIngredientesUnidadeMedida(List<Receita> receitas) {
-        Map<String, UnidadeMedida> mapa = new HashMap<>();
-        for (Receita receita : receitas) {
-            for (Ingrediente ingrediente : receita.getIngredientes()) {
-                String nomeIngrediente = ingrediente.getNome();
-                UnidadeMedida unidadeMedida = ingrediente.getQuantidade().getUnidade();
-                mapa.put(nomeIngrediente, unidadeMedida);
-            }
-        }
-        return mapa;
-    }
-	
+		Map<String, UnidadeMedida> mapa = new HashMap<>();
+		for (Receita receita : receitas) {
+			for (Ingrediente ingrediente : receita.getIngredientes()) {
+				String nomeIngrediente = ingrediente.getNome();
+				UnidadeMedida unidadeMedida = ingrediente.getQuantidade().getUnidade();
+				mapa.put(nomeIngrediente, unidadeMedida);
+			}
+		}
+		return mapa;
+	}
+
 	public Set<Ingrediente> coletarIngredientesDoCliente() {
-	    Set<Ingrediente> ingredientesCliente = new HashSet<>();
-	    Map<String, UnidadeMedida> ingredientesUnidadeMedida = criarMapaIngredientesUnidadeMedida(receitas);
-	    try (Scanner scanner = new Scanner(System.in)) {
-	        while (true) {
-	            System.out.println("Ingredientes disponíveis:");
+		Set<Ingrediente> ingredientesCliente = new HashSet<>();
+		Map<String, UnidadeMedida> ingredientesUnidadeMedida = criarMapaIngredientesUnidadeMedida(receitas);
+		try (Scanner scanner = new Scanner(System.in)) {
+			while (true) {
+				System.out.println("Ingredientes disponíveis:");
 
-	            int i = 1;
-	            for (String nomeIngrediente : ingredientesUnidadeMedida.keySet()) {
-	                System.out.println(i + ". " + nomeIngrediente);
-	                i++;
-	            }
-	            System.out.print("\nDigite o número correspondente ao ingrediente que você tem (ou 'sair' para encerrar): ");
-	            String escolha = scanner.nextLine();
+				int i = 1;
+				for (String nomeIngrediente : ingredientesUnidadeMedida.keySet()) {
+					System.out.println(i + ". " + nomeIngrediente);
+					i++;
+				}
+				System.out.print(
+						"\nDigite o número correspondente ao ingrediente que você tem (ou 'sair' para encerrar): ");
+				String escolha = scanner.nextLine();
 
-	            if (escolha.equalsIgnoreCase("sair")) {
-	                break; // Encerra a coleta de ingredientes
-	            }
+				if (escolha.equalsIgnoreCase("sair")) {
+					break; // Encerra a coleta de ingredientes
+				}
 
-	            int escolhaNumero = Integer.parseInt(escolha);
+				int escolhaNumero = Integer.parseInt(escolha);
 
-	            if (escolhaNumero < 1 || escolhaNumero > ingredientesUnidadeMedida.size()) {
-	                System.out.println("Opção inválida. Por favor, escolha um número válido.");
-	                continue;
-	            }
+				if (escolhaNumero < 1 || escolhaNumero > ingredientesUnidadeMedida.size()) {
+					System.out.println("Opção inválida. Por favor, escolha um número válido.");
+					continue;
+				}
 
-	            List<String> nomesIngredientes = new ArrayList<>(ingredientesUnidadeMedida.keySet());
-	            String nomeIngrediente = nomesIngredientes.get(escolhaNumero - 1);
-	            UnidadeMedida unidadeMedida = ingredientesUnidadeMedida.get(nomeIngrediente);
+				List<String> nomesIngredientes = new ArrayList<>(ingredientesUnidadeMedida.keySet());
+				String nomeIngrediente = nomesIngredientes.get(escolhaNumero - 1);
+				UnidadeMedida unidadeMedida = ingredientesUnidadeMedida.get(nomeIngrediente);
 
-	            System.out.print("Digite a quantidade que você possui ("+ unidadeMedida.getNome() +"): ");
-	            double quantidade = Double.parseDouble(scanner.nextLine());
+				System.out.print("Digite a quantidade que você possui (" + unidadeMedida.getNome() + "): ");
+				double quantidade = Double.parseDouble(scanner.nextLine());
 
-	            // Cria o objeto Ingrediente com as informações fornecidas
-	            Ingrediente ingrediente = new Ingrediente(nomeIngrediente, new Quantidade(quantidade, unidadeMedida));
-	            ingredientesCliente.add(ingrediente);
-	        }
-	    } catch (NumberFormatException e) {
-	        e.printStackTrace();
-	    }
+				// Cria o objeto Ingrediente com as informações fornecidas
+				Ingrediente ingrediente = new Ingrediente(nomeIngrediente, new Quantidade(quantidade, unidadeMedida));
+				ingredientesCliente.add(ingrediente);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
 
-	    return ingredientesCliente;
+		return ingredientesCliente;
 	}
 
 	public List<Receita> inicializarReceitas() {
 		List<Receita> receitas = InicializadorReceitas.inicializarReceitas();
-		
+
 		return receitas;
 	}
 
 	public List<Receita> inicializarReceitas(String nomeArquivo) {
 		return carregarReceitas(nomeArquivo);
 	}
-	
+
 	public void adicionarReceita(Receita receita) {
 		receitas.add(receita);
 	}
@@ -220,34 +227,34 @@ public class SElecaoSupimpa {
 			return null; //
 		}
 	}
-	
+
 	public void resetarReceitas() {
 		receitas = inicializarReceitas();
 	}
 
-	public List<Receita> getReceitas() {		
+	public List<Receita> getReceitas() {
 		return receitas;
 	}
-	
-	public List<Receita> getReceitasCliente() {		
+
+	public List<Receita> getReceitasCliente() {
 		return receitasCliente;
 	}
 
 	public void atualizarReceita(Receita receitaExistente) {
-		
+
 	}
 
 	public void removerReceita(Receita receitaExistente) {
-	    Iterator<Receita> iterator = receitas.iterator();
-	    while (iterator.hasNext()) {
-	        Receita receita = iterator.next();
-	        if (receita.equals(receitaExistente)) {
-	            iterator.remove();
-	            System.out.println("Receita removida com sucesso: " + receitaExistente.getNome());
-	            salvarReceitas(receitas, "receitas.bin"); // Salva as receitas atualizadas no arquivo
-	            return;
-	        }
-	    }
-	    System.out.println("Receita não encontrada: " + receitaExistente.getNome());
+		Iterator<Receita> iterator = receitas.iterator();
+		while (iterator.hasNext()) {
+			Receita receita = iterator.next();
+			if (receita.equals(receitaExistente)) {
+				iterator.remove();
+				System.out.println("Receita removida com sucesso: " + receitaExistente.getNome());
+				salvarReceitas(receitas, "receitas.bin"); // Salva as receitas atualizadas no arquivo
+				return;
+			}
+		}
+		System.out.println("Receita não encontrada: " + receitaExistente.getNome());
 	}
 }
